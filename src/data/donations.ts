@@ -5,18 +5,17 @@
  */
 
 export interface DonationAddresses {
-  lightningLnurl: string;
   bitcoinOnchain: string;
-  monero: string;
   ethereum: string;
+  solana: string;
+  doge: string;
 }
 
 export const DONATIONS: DonationAddresses = {
-  lightningLnurl: "humani@getalby.com",
-  bitcoinOnchain: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-  monero:
-    "44AFFq5kSiGBoZ4NMDwYtN18obc8AemS33DBLWs3H7otXft3XjrpDtQGv7SqSsaBYBb98uNbr2VBBEt7f2wfn3RVGQBEP3",
-  ethereum: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+  bitcoinOnchain: "bc1qfque4fghwxusfh70l63lkxmzz8ctl02wexqahl",
+  ethereum: "0xc7427F23C55a980cD2Ceea25eDb3b372af70aF0E",
+  solana: "C6CfKTdZfnsikkLiJoc8F6EhLcXFkfYhPyHdwJaPAd1y",
+  doge: "DSBH3W4pxqM9Ex8fbCYGWzCaCYcSGWcCpx",
 };
 
 export const DONATION_NOTE = {

@@ -119,10 +119,10 @@ export interface Copy {
     title: string;
     subtitle: string;
     note: string;
-    lightning: string;
     bitcoin: string;
-    monero: string;
     ethereum: string;
+    solana: string;
+    doge: string;
     copy: string;
     copied: string;
   };
@@ -292,10 +292,10 @@ export const copyEs: Copy = {
     title: "Donar",
     subtitle: "El sitio es gratis y sin vigilancia. Si quieres sostenerlo, puedes.",
     note: "No hay procesadores, no hay rastros, no hay agradecimientos públicos. Solo direcciones estáticas.",
-    lightning: "Lightning (LNURL)",
     bitcoin: "Bitcoin (on-chain)",
-    monero: "Monero",
     ethereum: "Ethereum",
+    solana: "Solana",
+    doge: "Dogecoin",
     copy: "Copiar",
     copied: "Copiado",
   },

@@ -23,10 +23,10 @@ export function Donate() {
   }
 
   const items = [
-    { key: "lightning", label: copy.donate.lightning, value: DONATIONS.lightningLnurl },
     { key: "bitcoin", label: copy.donate.bitcoin, value: DONATIONS.bitcoinOnchain },
-    { key: "monero", label: copy.donate.monero, value: DONATIONS.monero },
     { key: "ethereum", label: copy.donate.ethereum, value: DONATIONS.ethereum },
+    { key: "solana", label: copy.donate.solana, value: DONATIONS.solana },
+    { key: "doge", label: copy.donate.doge, value: DONATIONS.doge },
   ];
 
   return (
