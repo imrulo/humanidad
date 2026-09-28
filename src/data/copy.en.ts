@@ -2,9 +2,9 @@ import type { Copy } from "./copy.es";
 
 export const copyEn: Copy = {
   meta: {
-    title: "humani.dad — What kind of political human you are",
+    title: "humani.dad — What kind of political human are you",
     description:
-      "Twelve axes, a hundred possible questions, one profile. Free forever. No accounts, no cookies, no server.",
+      "Twelve tensions, one portrait, one historical figure. About 4 minutes. Nobody sees your answers.",
   },
   nav: {
     home: "Home",
@@ -13,29 +13,30 @@ export const copyEn: Copy = {
     about: "About",
     donate: "Donate",
     compare: "Compare",
+    more: "More",
   },
   home: {
-    heroTitle: "What kind of political human you are.",
+    heroTitle: "What kind of political human are you.",
     heroSubtitle:
-      "Twelve axes. A hundred possible questions. A profile you can share, compare and argue about. Free forever.",
+      "It is not left against right. It is twelve tensions running through politics, economics, war, faith and technique. One portrait, one historical figure, about 4 minutes. Nobody sees your answers.",
     cta: "Discover my profile",
     ctaSecondary: "See the 12 axes",
-    sizesTitle: "Choose your size",
+    sizesTitle: "Or go deeper",
     sizeShort: "Short",
     sizeStandard: "Standard",
     sizeDeep: "Deep",
     sizeShortTime: "4 min",
     sizeStandardTime: "8 min",
     sizeDeepTime: "18 min",
-    sizeShortDesc: "36 questions. To get started.",
-    sizeStandardDesc: "60 questions. The sweet spot.",
-    sizeDeepDesc: "120 questions. For lying awake at night.",
+    sizeShortDesc: "36 questions. The essential portrait.",
+    sizeStandardDesc: "60 questions. More nuance.",
+    sizeDeepDesc: "120 questions. The full map.",
     mirrorTitle: "It is not a diagnosis. It is a mirror.",
     mirrorText:
-      "humani.dad does not tell you who you are. It tells you where you stand on twelve axes that run through politics, economics, war, faith and technique. There is no correct side. There is no better answer. There is only a profile you can look at, share and argue about.",
-    exampleTitle: "Example card",
+      "humani.dad does not tell you who you are. It tells you where you stand on twelve tensions running through politics, economics, war, faith and technique. There is no correct side. There is no better answer. There is only a profile you can look at, share and argue about.",
+    exampleTitle: "Example portrait",
     exampleText:
-      "This is what a result looks like. Twelve bars, one profile, a compatible person and a territorial archetype. Everything is calculated in your browser and stored in the URL.",
+      "This is what a result looks like. A name, a compatibility, a historical figure and a territorial archetype. Everything is calculated in your browser and stored in the URL.",
     footerNote: "Free. Unmonitored. Serverless.",
   },
   axes: {
@@ -51,12 +52,9 @@ export const copyEn: Copy = {
     back: "Back",
     skip: "I don't know",
     skipWarning:
-      "You have used too many skips. Honest answers give more accurate profiles.",
-    seriousQuestion: "Are you answering seriously?",
-    seriousYes: "Yes, seriously",
-    seriousNo: "Just browsing",
-    seriousNote:
-      "No harm if you are just browsing. But the profile will be more useful if you answer honestly.",
+      "Too many skips. Honest answers give more accurate portraits.",
+    loading: "Loading…",
+    questionsCount: "{count} questions.",
     start: "Start",
     chooseMode: "Choose the size",
     modeShort: "Short — 36 questions, ~4 min",
@@ -88,11 +86,14 @@ export const copyEn: Copy = {
       "This is a cultural-political archetype, not a scientific survey average.",
     people: "Compatible people",
     ideologies: "Nearby ideologies",
-    download: "Download PNG card",
+    download: "Download PNG",
     copyLink: "Copy link",
     copied: "Link copied",
+    share: "Share",
     shareX: "Share on X",
-    shareText: "I took the humani.dad test and this is what came out:",
+    shareText: "I took the humani.dad test and got {ideologia}. Let's see what you get.",
+    retar: "Challenge someone",
+    irMasHondo: "Go deeper",
     repeat: "Retake test",
     compare: "Compare with another URL",
     invalidTitle: "This link does not work",
@@ -101,6 +102,7 @@ export const copyEn: Copy = {
     invalidCta: "Start test",
     family: "Approximate political family",
     embed: "Clean version for screenshots",
+    verEjes: "See the twelve axes",
   },
   method: {
     title: "Method",
@@ -129,7 +131,7 @@ export const copyEn: Copy = {
       "humani.dad is a 12-axis human-political profile test. It is static, free to operate forever and has no server. All calculation happens in your browser.",
     whyTitle: "Why it exists",
     whyText:
-      "Because existing political tests are either too simple (left-right) or too complex (twelve copied axes). humani.dad tries to be the sweet spot: twelve axes running through politics, economics, war, faith and technique, with concrete questions and a shareable result.",
+      "Because existing political tests are either too simple (left-right) or too complex (twelve copied axes). humani.dad tries to be the sweet spot: twelve tensions running through politics, economics, war, faith and technique, with concrete questions and a shareable result.",
     creditsTitle: "Credits",
     creditsText:
       "Typefaces: Fraunces and Atkinson Hyperlegible, self-hosted with @fontsource (OFL). Icons: lucide-react (MIT). Code: React, TypeScript, Vite, Tailwind CSS, Zustand, framer-motion, html-to-image. All content is original.",

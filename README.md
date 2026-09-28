@@ -81,6 +81,8 @@ En `src/lib/score.ts`:
 4. Se normaliza a 0-100, se hace clamp y se redondea a entero.
 5. No hay azar: el mismo set de respuestas siempre da el mismo resultado.
 
+**Modo corto canónico:** el modo short (36 preguntas) usa un set fijo y orden fijo: las 3 primeras preguntas de cada eje por id estable. Dos personas hacen exactamente el mismo test. Los modos standard y deep usan orden aleatorio con semilla de sesión.
+
 ## Cómo funciona el match
 
 En `src/lib/match.ts`:
@@ -105,6 +107,10 @@ También se acepta el query clásico por compatibilidad:
 ```
 /r?hogar-imperio=30&asamblea-cetro=25&...
 ```
+
+## Duelo
+
+Desde la página de resultados, el botón "Retar a alguien" comparte un link `/quiz?duelo=<payload>`. Quien abre ese link hace el modo corto canónico y, al terminar, navega automáticamente a `/comparar?a=<payload-duelo>&b=<payload-nuevo>` para ver la comparación lado a lado.
 
 ## PWA
 

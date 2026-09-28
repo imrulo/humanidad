@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GitCompare } from "lucide-react";
 import { useI18n } from "../i18n";
 import { AXES, type Scores } from "../data/axes";
@@ -53,6 +53,28 @@ export function Compare() {
   const [scoresB, setScoresB] = useState<Scores | null>(null);
   const [error, setError] = useState(false);
 
+  // Leer query params ?a= y ?b=.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const a = params.get("a");
+    const b = params.get("b");
+
+    if (a) {
+      const decoded = parseInput(a);
+      if (decoded) {
+        setScoresA(decoded);
+        setInputA(a);
+      }
+    }
+    if (b) {
+      const decoded = parseInput(b);
+      if (decoded) {
+        setScoresB(decoded);
+        setInputB(b);
+      }
+    }
+  }, []);
+
   function handleCompare() {
     const a = parseInput(inputA);
     const b = parseInput(inputB);
@@ -76,7 +98,8 @@ export function Compare() {
           }, 0),
         )
       : 0;
-  const compatibility = scoresA && scoresB ? Math.round(100 * (1 - distance / MAX_DISTANCE)) : 0;
+  const compatibility =
+    scoresA && scoresB ? Math.round(100 * (1 - distance / MAX_DISTANCE)) : 0;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
@@ -137,7 +160,9 @@ export function Compare() {
             <span className="font-serif text-5xl font-black text-accent dark:text-accent-dark">
               {compatibility}%
             </span>
-            <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">{copy.compare.compatibility}</p>
+            <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">
+              {copy.compare.compatibility}
+            </p>
           </div>
 
           <div className="flex flex-col gap-5 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15">
@@ -147,7 +172,9 @@ export function Compare() {
               return (
                 <div key={axis.id}>
                   <div className="mb-1 flex items-center justify-between text-xs">
-                    <span className="font-medium text-ink/70 dark:text-ink-dark/70">{axis.shortLabel}</span>
+                    <span className="font-medium text-ink/70 dark:text-ink-dark/70">
+                      {axis.shortLabel}
+                    </span>
                     <span className="font-bold text-ink/50 dark:text-ink-dark/50">
                       A:{a} · B:{b}
                     </span>

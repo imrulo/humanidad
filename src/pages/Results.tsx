@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
-import { Download, Copy, Check, Share2, RotateCcw, GitCompare } from "lucide-react";
+import { Download, Copy, Check, Share2, RotateCcw, Swords, ArrowDownWideNarrow } from "lucide-react";
 import { useI18n, persistLang } from "../i18n";
 import { AXES, AXIS_MAP, type Scores, type Lang } from "../data/axes";
 import { decodeScores, decodeQueryParams } from "../lib/url";
@@ -47,7 +47,6 @@ export function Results({ embed = false }: { embed?: boolean }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback para navegadores sin clipboard API.
       const input = document.createElement("input");
       input.value = window.location.href;
       document.body.appendChild(input);
@@ -72,11 +71,55 @@ export function Results({ embed = false }: { embed?: boolean }) {
     }
   }, [matches, scores, lang]);
 
+  const handleShare = useCallback(async () => {
+    if (!matches) return;
+    const text = copy.results.shareText.replace("{ideologia}", matches.topIdeology.item.name[lang]);
+    const url = window.location.href;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "humani.dad", text, url });
+        return;
+      } catch {
+        // Usuario canceló o no disponible: fallback a copiar.
+      }
+    }
+    await handleCopy();
+  }, [matches, copy.results.shareText, lang, handleCopy]);
+
   const handleShareX = useCallback(() => {
-    const text = encodeURIComponent(copy.results.shareText);
+    if (!matches) return;
+    const text = encodeURIComponent(
+      copy.results.shareText.replace("{ideologia}", matches.topIdeology.item.name[lang]),
+    );
     const url = encodeURIComponent(window.location.href);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank", "noopener");
-  }, [copy.results.shareText]);
+  }, [matches, copy.results.shareText, lang]);
+
+  const handleRetar = useCallback(async () => {
+    if (!payload) return;
+    const dueloUrl = `${window.location.origin}/quiz?duelo=${payload}`;
+    const text = copy.results.shareText.replace(
+      "{ideologia}",
+      matches?.topIdeology.item.name[lang] ?? "",
+    );
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "humani.dad", text, url: dueloUrl });
+        return;
+      } catch {
+        // Fallback.
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(dueloUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Ignorar.
+    }
+  }, [payload, matches, copy.results.shareText, lang]);
 
   // Estado inválido.
   if (!scores || !matches) {
@@ -94,7 +137,16 @@ export function Results({ embed = false }: { embed?: boolean }) {
     );
   }
 
-  const { topIdeology, topIdeologies, topArchetype, topArchetypes, topPerson, topPeople, weirdestAxis, typicalAxis, family } = matches;
+  const {
+    topIdeology,
+    topIdeologies,
+    topArchetype,
+    topPerson,
+    topPeople,
+    weirdestAxis,
+    typicalAxis,
+    family,
+  } = matches;
 
   const weirdAxisData = AXIS_MAP[weirdestAxis.axis];
   const typicalAxisData = AXIS_MAP[typicalAxis.axis];
@@ -108,8 +160,8 @@ export function Results({ embed = false }: { embed?: boolean }) {
         </div>
       )}
 
-      {/* Header del resultado */}
-      <header className="animate-fade-up mb-8 text-center">
+      {/* Header del resultado: arriba del fold */}
+      <header className="animate-fade-up mb-6 text-center">
         <div className="mb-2 text-sm font-bold uppercase tracking-widest text-ink/50 dark:text-ink-dark/50">
           {copy.results.family}: {family}
         </div>
@@ -118,79 +170,69 @@ export function Results({ embed = false }: { embed?: boolean }) {
           <span className="font-bold text-accent dark:text-accent-dark">{topIdeology.compatibility}%</span>{" "}
           {copy.results.compatibility} {copy.results.withIdeology} {topIdeology.item.name[lang]}
         </p>
-        <p className="mx-auto mt-3 max-w-xl text-sm text-ink/60 dark:text-ink-dark/60">
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-ink/60 dark:text-ink-dark/60">
           {topIdeology.item.summary[lang]}
         </p>
       </header>
 
-      {/* Persona compatible */}
-      <section className="animate-fade-up mb-8 flex items-center gap-4 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "60ms" }}>
-        <Monogram name={topPerson.item.name} size={72} tint={topPerson.item.tint} />
-        <div className="flex-1">
-          <div className="mb-1 text-xs font-bold uppercase tracking-wide text-ink/50 dark:text-ink-dark/50">
-            {copy.results.people} · {topPerson.compatibility}%
+      {/* Persona compatible + arquetipo */}
+      <section className="animate-fade-up mb-6 flex flex-col gap-4 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "60ms" }}>
+        <div className="flex items-center gap-4">
+          <Monogram name={topPerson.item.name} size={64} tint={topPerson.item.tint} />
+          <div className="flex-1">
+            <div className="mb-1 text-xs font-bold uppercase tracking-wide text-ink/50 dark:text-ink-dark/50">
+              {copy.results.people} · {topPerson.compatibility}%
+            </div>
+            <h2 className="font-serif text-xl font-bold">{topPerson.item.name}</h2>
+            <p className="text-sm text-ink/60 dark:text-ink-dark/60">{topPerson.item.occupation[lang]}</p>
           </div>
-          <h2 className="font-serif text-2xl font-bold">{topPerson.item.name}</h2>
-          <p className="text-sm text-ink/60 dark:text-ink-dark/60">{topPerson.item.occupation[lang]}</p>
-          <p className="mt-2 text-sm leading-relaxed text-ink/70 dark:text-ink-dark/70">{topPerson.item.summary[lang]}</p>
         </div>
+        <div className="flex items-center justify-between rounded-xl bg-ink/5 px-4 py-3 dark:bg-ink-dark/5">
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wide text-ink/50 dark:text-ink-dark/50">
+              {copy.results.archetype}
+            </div>
+            <div className="font-bold">{topArchetype.item.name[lang]}</div>
+          </div>
+          <span className="font-bold text-accent dark:text-accent-dark">{topArchetype.compatibility}%</span>
+        </div>
+        <p className="text-xs italic text-ink/40 dark:text-ink-dark/40">{copy.results.archetypeNote}</p>
       </section>
 
-      {/* 12 barras */}
-      <section className="animate-fade-up mb-8 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "120ms" }}>
-        <h2 className="mb-4 font-serif text-xl font-bold">{copy.nav.axes}</h2>
-        <div className="flex flex-col gap-4">
+      {/* Lo que te hace raro */}
+      <section className="animate-fade-up mb-6 rounded-2xl border border-accent/40 bg-accent/10 p-6 dark:border-accent-dark/40 dark:bg-accent-dark/10" style={{ animationDelay: "120ms" }}>
+        <h3 className="mb-2 font-serif text-lg font-bold">{copy.results.weirdAxis}</h3>
+        <p className="text-sm text-ink/70 dark:text-ink-dark/70">
+          {copy.results.weirdText
+            .replace("{axis}", weirdAxisData.shortLabel)
+            .replace("{delta}", String(weirdestAxis.delta))}
+        </p>
+      </section>
+
+      {/* Lo más típico */}
+      <section className="animate-fade-up mb-6 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "180ms" }}>
+        <h3 className="mb-2 font-serif text-lg font-bold">{copy.results.typicalAxis}</h3>
+        <p className="text-sm text-ink/70 dark:text-ink-dark/70">
+          {copy.results.typicalText
+            .replace("{axis}", typicalAxisData.shortLabel)
+            .replace("{delta}", String(typicalAxis.delta))}
+        </p>
+      </section>
+
+      {/* 12 ejes en details */}
+      <details className="animate-fade-up mb-6 rounded-2xl border border-ink/15 dark:border-ink-dark/15" style={{ animationDelay: "240ms" }}>
+        <summary className="cursor-pointer p-6 font-serif text-xl font-bold">
+          {copy.results.verEjes}
+        </summary>
+        <div className="flex flex-col gap-4 px-6 pb-6">
           {AXES.map((axis) => (
             <AxisBar key={axis.id} axis={axis} value={scores[axis.id]} />
           ))}
         </div>
-      </section>
-
-      {/* Lo que te hace raro / Lo más típico */}
-      <section className="mb-8 grid gap-4 md:grid-cols-2">
-        <div className="animate-fade-up rounded-2xl border border-accent/40 bg-accent/10 p-6 dark:border-accent-dark/40 dark:bg-accent-dark/10" style={{ animationDelay: "180ms" }}>
-          <h3 className="mb-2 font-serif text-lg font-bold">{copy.results.weirdAxis}</h3>
-          <p className="text-sm text-ink/70 dark:text-ink-dark/70">
-            {copy.results.weirdText
-              .replace("{axis}", weirdAxisData.shortLabel)
-              .replace("{delta}", String(weirdestAxis.delta))}
-          </p>
-        </div>
-        <div className="animate-fade-up rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "240ms" }}>
-          <h3 className="mb-2 font-serif text-lg font-bold">{copy.results.typicalAxis}</h3>
-          <p className="text-sm text-ink/70 dark:text-ink-dark/70">
-            {copy.results.typicalText
-              .replace("{axis}", typicalAxisData.shortLabel)
-              .replace("{delta}", String(typicalAxis.delta))}
-          </p>
-        </div>
-      </section>
-
-      {/* Arquetipo territorial */}
-      <section className="animate-fade-up mb-8 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "300ms" }}>
-        <div className="mb-3 flex items-center gap-2">
-          <h2 className="font-serif text-xl font-bold">{copy.results.archetype}</h2>
-          <span className="rounded-full bg-ink/5 px-3 py-1 text-xs text-ink/50 dark:bg-ink-dark/5 dark:text-ink-dark/50">
-            {topArchetype.compatibility}%
-          </span>
-        </div>
-        <h3 className="text-lg font-bold">{topArchetype.item.name[lang]}</h3>
-        <p className="mt-1 text-sm text-ink/60 dark:text-ink-dark/60">{topArchetype.item.summary[lang]}</p>
-        <p className="mt-3 text-xs italic text-ink/40 dark:text-ink-dark/40">{copy.results.archetypeNote}</p>
-
-        {topArchetypes.length > 1 && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {topArchetypes.slice(1).map((a) => (
-              <span key={a.item.id} className="rounded-full border border-ink/15 px-3 py-1 text-xs text-ink/60 dark:border-ink-dark/15 dark:text-ink-dark/60">
-                {a.item.name[lang]} · {a.compatibility}%
-              </span>
-            ))}
-          </div>
-        )}
-      </section>
+      </details>
 
       {/* Ideologías cercanas */}
-      <section className="animate-fade-up mb-8 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "360ms" }}>
+      <section className="animate-fade-up mb-6 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "300ms" }}>
         <h2 className="mb-4 font-serif text-xl font-bold">{copy.results.ideologies}</h2>
         <div className="flex flex-col gap-3">
           {topIdeologies.map((entry) => (
@@ -206,7 +248,7 @@ export function Results({ embed = false }: { embed?: boolean }) {
       </section>
 
       {/* Personas cercanas */}
-      <section className="animate-fade-up mb-8 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "420ms" }}>
+      <section className="animate-fade-up mb-6 rounded-2xl border border-ink/15 p-6 dark:border-ink-dark/15" style={{ animationDelay: "360ms" }}>
         <h2 className="mb-4 font-serif text-xl font-bold">{copy.results.people}</h2>
         <div className="grid gap-3 md:grid-cols-3">
           {topPeople.map((entry) => (
@@ -220,49 +262,76 @@ export function Results({ embed = false }: { embed?: boolean }) {
         </div>
       </section>
 
-      {/* Acciones */}
+      {/* Ir más hondo */}
       {!embed && (
-        <section className="animate-fade-up flex flex-wrap justify-center gap-3 pb-12" style={{ animationDelay: "480ms" }}>
-          <button
-            type="button"
-            onClick={handleDownload}
-            disabled={downloading}
-            className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 font-bold text-paper transition-transform hover:scale-105 disabled:opacity-50 dark:bg-ink-dark dark:text-paper-dark"
-          >
-            <Download size={18} />
-            {downloading ? "…" : copy.results.download}
-          </button>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-6 py-3 font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
-          >
-            {copied ? <Check size={18} /> : <Copy size={18} />}
-            {copied ? copy.results.copied : copy.results.copyLink}
-          </button>
-          <button
-            type="button"
-            onClick={handleShareX}
-            className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-6 py-3 font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
-          >
-            <Share2 size={18} />
-            {copy.results.shareX}
-          </button>
+        <div className="animate-fade-up mb-6 text-center" style={{ animationDelay: "420ms" }}>
           <Link
-            to="/quiz"
+            to="/quiz?modo=standard"
             className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-6 py-3 font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
           >
-            <RotateCcw size={18} />
-            {copy.results.repeat}
+            <ArrowDownWideNarrow size={18} />
+            {copy.results.irMasHondo}
           </Link>
-          <Link
-            to="/comparar"
-            className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-6 py-3 font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
-          >
-            <GitCompare size={18} />
-            {copy.results.compare}
-          </Link>
-        </section>
+        </div>
+      )}
+
+      {/* Acciones sticky en móvil */}
+      {!embed && (
+        <div
+          className="animate-fade-up sticky bottom-0 z-30 -mx-4 mt-6 border-t border-ink/10 bg-paper/95 px-4 py-3 backdrop-blur-sm pb-[max(0.75rem,env(safe-area-inset-bottom))] dark:border-ink-dark/10 dark:bg-paper-dark/95"
+          style={{ animationDelay: "480ms" }}
+        >
+          <div className="flex flex-wrap justify-center gap-2">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-paper transition-transform hover:scale-105 dark:bg-ink-dark dark:text-paper-dark"
+            >
+              <Share2 size={16} />
+              {copy.results.share}
+            </button>
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={downloading}
+              className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-5 py-2.5 text-sm font-bold transition-colors hover:border-ink/40 disabled:opacity-50 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
+            >
+              <Download size={16} />
+              {downloading ? "…" : copy.results.download}
+            </button>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-5 py-2.5 text-sm font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              {copied ? copy.results.copied : copy.results.copyLink}
+            </button>
+            <button
+              type="button"
+              onClick={handleShareX}
+              className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-5 py-2.5 text-sm font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
+            >
+              <Share2 size={16} />
+              {copy.results.shareX}
+            </button>
+            <button
+              type="button"
+              onClick={handleRetar}
+              className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-5 py-2.5 text-sm font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
+            >
+              <Swords size={16} />
+              {copy.results.retar}
+            </button>
+            <Link
+              to="/quiz"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-5 py-2.5 text-sm font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
+            >
+              <RotateCcw size={16} />
+              {copy.results.repeat}
+            </Link>
+          </div>
+        </div>
       )}
 
       {/* Link a embed */}

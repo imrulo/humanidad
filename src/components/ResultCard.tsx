@@ -11,13 +11,20 @@ interface ResultCardProps {
 }
 
 /**
- * Tarjeta de resultado compartible (ratio 1080x1350, 4:5).
- * Diseñada para leerse en el feed de X.
+ * Tarjeta de resultado compartible (1080x1350, 4:5).
+ * Diseñada para leerse en un story de WhatsApp.
+ * Muestra solo los 3 ejes con mayor |valor-50|.
  */
 export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
   function ResultCard({ scores, match, width = 1080 }, ref) {
     const { copy, lang } = useI18n();
     const { topIdeology, topPerson, topArchetype } = match;
+
+    // 3 ejes con mayor |valor-50|.
+    const top3Axes = [...AXES]
+      .map((axis) => ({ axis, value: scores[axis.id], extremity: Math.abs(scores[axis.id] - 50) }))
+      .sort((a, b) => b.extremity - a.extremity)
+      .slice(0, 3);
 
     return (
       <div
@@ -39,15 +46,28 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
           <span style={{ fontSize: width * 0.028, fontWeight: 700, letterSpacing: "0.08em" }}>
             humani.dad
           </span>
-          <span style={{ fontSize: width * 0.02, opacity: 0.6 }}>4:5</span>
         </div>
 
         {/* Perfil */}
         <div style={{ marginTop: width * 0.04 }}>
-          <div style={{ fontSize: width * 0.02, opacity: 0.7, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+          <div
+            style={{
+              fontSize: width * 0.02,
+              opacity: 0.7,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+            }}
+          >
             {lang === "es" ? "Tu perfil" : "Your profile"}
           </div>
-          <div style={{ fontSize: width * 0.055, fontWeight: 700, lineHeight: 1.1, marginTop: width * 0.008 }}>
+          <div
+            style={{
+              fontSize: width * 0.055,
+              fontWeight: 700,
+              lineHeight: 1.1,
+              marginTop: width * 0.008,
+            }}
+          >
             {topIdeology.item.name[lang]}
           </div>
           <div style={{ fontSize: width * 0.028, color: "#a8b06a", marginTop: width * 0.008 }}>
@@ -56,7 +76,14 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
         </div>
 
         {/* Persona compatible */}
-        <div style={{ marginTop: width * 0.035, display: "flex", alignItems: "center", gap: width * 0.02 }}>
+        <div
+          style={{
+            marginTop: width * 0.035,
+            display: "flex",
+            alignItems: "center",
+            gap: width * 0.02,
+          }}
+        >
           <div
             style={{
               width: width * 0.07,
@@ -76,49 +103,108 @@ export const ResultCard = forwardRef<HTMLDivElement, ResultCardProps>(
           </div>
           <div>
             <div style={{ fontSize: width * 0.026, fontWeight: 600 }}>{topPerson.item.name}</div>
-            <div style={{ fontSize: width * 0.018, opacity: 0.6 }}>{topPerson.item.occupation[lang]}</div>
+            <div style={{ fontSize: width * 0.018, opacity: 0.6 }}>
+              {topPerson.item.occupation[lang]}
+            </div>
           </div>
         </div>
 
-        {/* 12 ejes */}
-        <div style={{ marginTop: width * 0.035, display: "flex", flexDirection: "column", gap: width * 0.008, flex: 1 }}>
-          {AXES.map((axis) => {
-            const value = scores[axis.id];
-            return (
-              <div key={axis.id} style={{ display: "flex", alignItems: "center", gap: width * 0.012 }}>
-                <span style={{ fontSize: width * 0.014, opacity: 0.5, width: width * 0.05, textAlign: "right" }}>
-                  {axis.poleA}
-                </span>
-                <div style={{ flex: 1, height: width * 0.008, borderRadius: 9999, backgroundColor: "rgba(245,240,232,0.15)", overflow: "hidden" }}>
-                  <div
-                    style={{
-                      height: "100%",
-                      width: `${value}%`,
-                      backgroundColor: axis.color,
-                      borderRadius: 9999,
-                    }}
-                  />
-                </div>
-                <span style={{ fontSize: width * 0.014, opacity: 0.5, width: width * 0.05 }}>
-                  {axis.poleB}
-                </span>
+        {/* 3 ejes más extremos */}
+        <div
+          style={{
+            marginTop: width * 0.035,
+            display: "flex",
+            flexDirection: "column",
+            gap: width * 0.012,
+            flex: 1,
+          }}
+        >
+          {top3Axes.map(({ axis, value }) => (
+            <div key={axis.id} style={{ display: "flex", alignItems: "center", gap: width * 0.012 }}>
+              <span
+                style={{
+                  fontSize: width * 0.016,
+                  opacity: 0.6,
+                  width: width * 0.06,
+                  textAlign: "right",
+                }}
+              >
+                {axis.poleA}
+              </span>
+              <div
+                style={{
+                  flex: 1,
+                  height: width * 0.01,
+                  borderRadius: 9999,
+                  backgroundColor: "rgba(245,240,232,0.15)",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${value}%`,
+                    backgroundColor: axis.color,
+                    borderRadius: 9999,
+                  }}
+                />
               </div>
-            );
-          })}
+              <span
+                style={{
+                  fontSize: width * 0.016,
+                  opacity: 0.6,
+                  width: width * 0.06,
+                }}
+              >
+                {axis.poleB}
+              </span>
+              <span
+                style={{
+                  fontSize: width * 0.018,
+                  fontWeight: 700,
+                  width: width * 0.04,
+                  textAlign: "right",
+                }}
+              >
+                {value}
+              </span>
+            </div>
+          ))}
         </div>
 
         {/* Arquetipo */}
-        <div style={{ marginTop: width * 0.03, paddingTop: width * 0.02, borderTop: "1px solid rgba(245,240,232,0.15)" }}>
-          <div style={{ fontSize: width * 0.016, opacity: 0.5, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+        <div
+          style={{
+            marginTop: width * 0.03,
+            paddingTop: width * 0.02,
+            borderTop: "1px solid rgba(245,240,232,0.15)",
+          }}
+        >
+          <div
+            style={{
+              fontSize: width * 0.016,
+              opacity: 0.5,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+            }}
+          >
             {copy.results.archetype}
           </div>
-          <div style={{ fontSize: width * 0.026, fontWeight: 600 }}>{topArchetype.item.name[lang]}</div>
+          <div style={{ fontSize: width * 0.026, fontWeight: 600 }}>
+            {topArchetype.item.name[lang]}
+          </div>
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: width * 0.025, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+        <div
+          style={{
+            marginTop: width * 0.025,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "baseline",
+          }}
+        >
           <span style={{ fontSize: width * 0.022, fontWeight: 700 }}>humani.dad</span>
-          <span style={{ fontSize: width * 0.014, opacity: 0.4 }}>gratis · sin vigilancia · sin servidor</span>
         </div>
       </div>
     );
