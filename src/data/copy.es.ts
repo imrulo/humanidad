@@ -10,6 +10,7 @@ export interface Copy {
     about: string;
     donate: string;
     compare: string;
+    more: string;
   };
   home: {
     heroTitle: string;
@@ -31,6 +32,7 @@ export interface Copy {
     exampleTitle: string;
     exampleText: string;
     footerNote: string;
+    footerCredit: string;
   };
   axes: {
     title: string;
@@ -44,10 +46,8 @@ export interface Copy {
     back: string;
     skip: string;
     skipWarning: string;
-    seriousQuestion: string;
-    seriousYes: string;
-    seriousNo: string;
-    seriousNote: string;
+    loading: string;
+    questionsCount: string;
     start: string;
     chooseMode: string;
     modeShort: string;
@@ -79,8 +79,11 @@ export interface Copy {
     download: string;
     copyLink: string;
     copied: string;
+    share: string;
     shareX: string;
     shareText: string;
+    retar: string;
+    irMasHondo: string;
     repeat: string;
     compare: string;
     invalidTitle: string;
@@ -88,6 +91,7 @@ export interface Copy {
     invalidCta: string;
     family: string;
     embed: string;
+    verEjes: string;
   };
   method: {
     title: string;
@@ -155,7 +159,7 @@ export const copyEs: Copy = {
   meta: {
     title: "humani.dad — Qué clase de humano político eres",
     description:
-      "Doce ejes, cien preguntas posibles, un perfil. Gratis para siempre. Sin cuentas, sin cookies, sin servidor.",
+      "Doce tensiones, un retrato, una figura histórica. Unos 4 minutos. Nadie ve tus respuestas.",
   },
   nav: {
     home: "Inicio",
@@ -164,30 +168,32 @@ export const copyEs: Copy = {
     about: "Nosotros",
     donate: "Donar",
     compare: "Comparar",
+    more: "Más",
   },
   home: {
     heroTitle: "Qué clase de humano político eres.",
     heroSubtitle:
-      "Doce ejes. Cien preguntas posibles. Un perfil que puedes compartir, comparar y discutir. Gratis para siempre.",
+      "No es izquierda contra derecha. Son doce tensiones que atraviesan la política, la economía, la guerra, la fe y la técnica. Un retrato, una figura histórica, unos 4 minutos. Nadie ve tus respuestas.",
     cta: "Descubrir mi perfil",
     ctaSecondary: "Ver los 12 ejes",
-    sizesTitle: "Elige tu tamaño",
+    sizesTitle: "O ve más hondo",
     sizeShort: "Corto",
     sizeStandard: "Estándar",
     sizeDeep: "Hondo",
     sizeShortTime: "4 min",
     sizeStandardTime: "8 min",
     sizeDeepTime: "18 min",
-    sizeShortDesc: "36 preguntas. Para empezar.",
-    sizeStandardDesc: "60 preguntas. El punto justo.",
-    sizeDeepDesc: "120 preguntas. Para irse a dormir pensando.",
+    sizeShortDesc: "36 preguntas. El retrato esencial.",
+    sizeStandardDesc: "60 preguntas. Más matices.",
+    sizeDeepDesc: "120 preguntas. El mapa completo.",
     mirrorTitle: "No es un diagnóstico. Es un espejo.",
     mirrorText:
-      "humani.dad no te dice quién eres. Te dice dónde estás parado en doce ejes que atraviesan la política, la economía, la guerra, la fe y la técnica. No hay un bando correcto. No hay una respuesta mejor. Solo hay un perfil que puedes mirar, compartir y discutir.",
-    exampleTitle: "Ejemplo de tarjeta",
+      "humani.dad no te dice quién eres. Te dice dónde estás parado en doce tensiones que atraviesan la política, la economía, la guerra, la fe y la técnica. No hay un bando correcto. No hay una respuesta mejor. Solo hay un perfil que puedes mirar, compartir y discutir.",
+    exampleTitle: "Ejemplo de retrato",
     exampleText:
-      "Así se ve un resultado. Doce barras, un perfil, una persona compatible y un arquetipo territorial. Todo se calcula en tu navegador y se guarda en la URL.",
+      "Así se ve un resultado. Un nombre, una compatibilidad, una figura histórica y un arquetipo territorial. Todo se calcula en tu navegador y se guarda en la URL.",
     footerNote: "Gratis. Sin vigilancia. Sin servidor.",
+    footerCredit: "hecho por imrulo.eth",
   },
   axes: {
     title: "Los 12 ejes",
@@ -202,12 +208,9 @@ export const copyEs: Copy = {
     back: "Volver",
     skip: "No lo sé",
     skipWarning:
-      "Has usado demasiados saltos. Las respuestas honestas dan perfiles más precisos.",
-    seriousQuestion: "¿Estás respondiendo en serio?",
-    seriousYes: "Sí, en serio",
-    seriousNo: "Solo curioseando",
-    seriousNote:
-      "No pasa nada si solo curioseas. Pero el perfil será más útil si respondes con honestidad.",
+      "Demasiados saltos. Las respuestas honestas dan retratos más precisos.",
+    loading: "Cargando…",
+    questionsCount: "{count} preguntas.",
     start: "Empezar",
     chooseMode: "Elige el tamaño",
     modeShort: "Corto — 36 preguntas, ~4 min",
@@ -239,11 +242,14 @@ export const copyEs: Copy = {
       "Esto es un arquetipo cultural-político, no un promedio científico de encuestas.",
     people: "Personas compatibles",
     ideologies: "Ideologías cercanas",
-    download: "Descargar tarjeta PNG",
+    download: "Descargar PNG",
     copyLink: "Copiar enlace",
     copied: "Enlace copiado",
+    share: "Compartir",
     shareX: "Compartir en X",
-    shareText: "Hice el test de humani.dad y esto es lo que salió:",
+    shareText: "Hice el test de humani.dad y me salió {ideologia}. A ver qué te sale a ti.",
+    retar: "Retar a alguien",
+    irMasHondo: "Ir más hondo",
     repeat: "Repetir test",
     compare: "Comparar con otra URL",
     invalidTitle: "Este enlace no funciona",
@@ -252,6 +258,7 @@ export const copyEs: Copy = {
     invalidCta: "Empezar test",
     family: "Familia política aproximada",
     embed: "Versión limpia para screenshot",
+    verEjes: "Ver los doce ejes",
   },
   method: {
     title: "Método",
@@ -280,10 +287,10 @@ export const copyEs: Copy = {
       "humani.dad es un test de perfil humano-político de 12 ejes. Es estático, gratis de operar para siempre y no tiene servidor. Todo el cálculo ocurre en tu navegador.",
     whyTitle: "Por qué existe",
     whyText:
-      "Porque los tests políticos existentes son o demasiado simples (izquierda-derecha) o demasiado complejos (12 ejes copiados). humani.dad intenta ser el punto justo: doce ejes que atraviesan la política, la economía, la guerra, la fe y la técnica, con preguntas concretas y un resultado compartible.",
+      "Porque los tests políticos existentes son o demasiado simples (izquierda-derecha) o demasiado complejos (12 ejes copiados). humani.dad intenta ser el punto justo: doce tensiones que atraviesan la política, la economía, la guerra, la fe y la técnica, con preguntas concretas y un resultado compartible.",
     creditsTitle: "Créditos",
     creditsText:
-      "Tipografías: Fraunces y Atkinson Hyperlegible, autoalojadas con @fontsource (OFL). Iconos: licide-react (MIT). Código: React, TypeScript, Vite, Tailwind CSS, Zustand, framer-motion, html-to-image. Todo el contenido es original.",
+      "Tipografías: Fraunces y Atkinson Hyperlegible, autoalojadas con @fontsource (OFL). Iconos: lucide-react (MIT). Código: React, TypeScript, Vite, Tailwind CSS, Zustand, framer-motion, html-to-image. Todo el contenido es original.",
     licenseTitle: "Licencia",
     licenseText:
       "El código está bajo licencia MIT. El contenido (preguntas, ideologías, arquetipos, personas) está bajo licencia CC BY-SA 4.0. Puedes usarlo, modificarlo y compartirlo, siempre que des crédito y compartas con la misma licencia.",

@@ -22,6 +22,7 @@ export const MODE_QUESTIONS: Record<QuizMode, number> = {
 };
 
 const DRAFT_KEY = "humani.quiz.draft";
+const DUELO_KEY = "humani.quiz.duelo";
 
 interface DraftState {
   mode: QuizMode;
@@ -30,13 +31,12 @@ interface DraftState {
   currentIndex: number;
   seed: number;
   skips: number;
+  dueloPayload: string | null;
 }
-
-const MAX_SKIP_RATIO = 0.15;
 
 interface QuizState {
   draft: DraftState | null;
-  startQuiz: (mode: QuizMode) => void;
+  startQuiz: (mode: QuizMode, dueloPayload?: string | null) => void;
   answer: (questionId: string, value: number) => void;
   skip: (questionId: string) => void;
   goBack: () => void;
@@ -47,14 +47,30 @@ interface QuizState {
   hasDraft: () => boolean;
 }
 
+/**
+ * Modo short: set CANÓNICO y orden fijo.
+ * Toma las 3 primeras preguntas de cada eje por id estable (no seededShuffle).
+ * Standard y deep: orden aleatorio con semilla de sesión.
+ */
 function buildOrder(mode: QuizMode, seed: number): string[] {
   const perAxis = QUESTIONS_PER_AXIS[mode];
   const selected: Question[] = [];
 
   for (const axis of AXES) {
     const pool = QUESTIONS_BY_AXIS[axis.id];
-    const shuffled = seededShuffle(pool, seed + axis.id.length * 31);
-    selected.push(...shuffled.slice(0, perAxis));
+    if (mode === "short") {
+      // Canónico: primeras 3 por id estable.
+      const canonical = [...pool].sort((a, b) => a.id.localeCompare(b.id));
+      selected.push(...canonical.slice(0, perAxis));
+    } else {
+      const shuffled = seededShuffle(pool, seed + axis.id.length * 31);
+      selected.push(...shuffled.slice(0, perAxis));
+    }
+  }
+
+  if (mode === "short") {
+    // Orden fijo por eje (ya viene en orden de AXES).
+    return selected.map((q) => q.id);
   }
 
   return seededShuffle(selected, seed).map((q) => q.id);
@@ -86,12 +102,32 @@ function saveDraft(draft: DraftState | null): void {
   }
 }
 
+export function getDueloPayload(): string | null {
+  try {
+    return sessionStorage.getItem(DUELO_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function setDueloPayload(payload: string | null): void {
+  try {
+    if (payload) {
+      sessionStorage.setItem(DUELO_KEY, payload);
+    } else {
+      sessionStorage.removeItem(DUELO_KEY);
+    }
+  } catch {
+    // Ignorar.
+  }
+}
+
 export const useQuizStore = create<QuizState>()(
   persist(
     (set, get) => ({
       draft: loadDraft(),
 
-      startQuiz: (mode) => {
+      startQuiz: (mode, dueloPayload = null) => {
         const seed = getSessionSeed();
         const order = buildOrder(mode, seed);
         const draft: DraftState = {
@@ -101,6 +137,7 @@ export const useQuizStore = create<QuizState>()(
           currentIndex: 0,
           seed,
           skips: 0,
+          dueloPayload,
         };
         set({ draft });
         saveDraft(draft);
@@ -118,7 +155,6 @@ export const useQuizStore = create<QuizState>()(
       skip: (questionId) => {
         const { draft } = get();
         if (!draft) return;
-        // Skip cuenta como 50 (neutral) y se contabiliza para el límite.
         const answers = { ...draft.answers, [questionId]: 50 };
         const skips = draft.skips + 1;
         const next = { ...draft, answers, skips };
@@ -181,6 +217,8 @@ export const useQuizStore = create<QuizState>()(
     },
   ),
 );
+
+const MAX_SKIP_RATIO = 0.15;
 
 /** Verifica si el usuario ha excedido el límite de skips (15% del total). */
 export function skipLimitExceeded(skips: number, total: number): boolean {
