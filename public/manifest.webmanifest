@@ -1,0 +1,17 @@
+{
+  "name": "humani.dad",
+  "short_name": "humani.dad",
+  "description": "Qué clase de humano político eres. Test de 12 ejes, gratis, sin vigilancia.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1c1a15",
+  "theme_color": "#1c1a15",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
