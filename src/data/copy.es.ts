@@ -32,6 +32,7 @@ export interface Copy {
     exampleTitle: string;
     exampleText: string;
     footerNote: string;
+    footerCredit: string;
   };
   axes: {
     title: string;
@@ -192,6 +193,7 @@ export const copyEs: Copy = {
     exampleText:
       "Así se ve un resultado. Un nombre, una compatibilidad, una figura histórica y un arquetipo territorial. Todo se calcula en tu navegador y se guarda en la URL.",
     footerNote: "Gratis. Sin vigilancia. Sin servidor.",
+    footerCredit: "hecho por imrulo.eth",
   },
   axes: {
     title: "Los 12 ejes",

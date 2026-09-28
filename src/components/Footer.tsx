@@ -30,6 +30,16 @@ export function Footer() {
           ))}
         </nav>
         <p className="text-xs text-ink/40 dark:text-ink-dark/40">{copy.home.footerNote}</p>
+        <p className="text-xs text-ink/40 dark:text-ink-dark/40">
+          <a
+            href="https://github.com/imrulo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-ink dark:hover:text-ink-dark"
+          >
+            {copy.home.footerCredit}
+          </a>
+        </p>
       </div>
     </footer>
   );

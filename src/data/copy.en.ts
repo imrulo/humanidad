@@ -38,6 +38,7 @@ export const copyEn: Copy = {
     exampleText:
       "This is what a result looks like. A name, a compatibility, a historical figure and a territorial archetype. Everything is calculated in your browser and stored in the URL.",
     footerNote: "Free. Unmonitored. Serverless.",
+    footerCredit: "made by imrulo.eth",
   },
   axes: {
     title: "The 12 axes",
