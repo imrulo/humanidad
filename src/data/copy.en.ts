@@ -19,7 +19,7 @@ export const copyEn: Copy = {
     heroTitle: "What kind of political human are you.",
     heroSubtitle:
       "It is not left against right. It is twelve tensions running through politics, economics, war, faith and technique. One portrait, one historical figure, about 4 minutes. Nobody sees your answers.",
-    cta: "Discover my profile",
+    cta: "Start · 4 min",
     ctaSecondary: "See the 12 axes",
     sizesTitle: "Or go deeper",
     sizeShort: "Short",
@@ -55,7 +55,7 @@ export const copyEn: Copy = {
     skipWarning:
       "Too many skips. Honest answers give more accurate portraits.",
     loading: "Loading…",
-    questionsCount: "{count} questions.",
+    questionsCount: "{short} / {standard} / {deep} questions.",
     start: "Start",
     chooseMode: "Choose the size",
     modeShort: "Short — 36 questions, ~4 min",

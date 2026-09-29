@@ -174,7 +174,7 @@ export const copyEs: Copy = {
     heroTitle: "Qué clase de humano político eres.",
     heroSubtitle:
       "No es izquierda contra derecha. Son doce tensiones que atraviesan la política, la economía, la guerra, la fe y la técnica. Un retrato, una figura histórica, unos 4 minutos. Nadie ve tus respuestas.",
-    cta: "Descubrir mi perfil",
+    cta: "Empezar · 4 min",
     ctaSecondary: "Ver los 12 ejes",
     sizesTitle: "O ve más hondo",
     sizeShort: "Corto",
@@ -210,7 +210,7 @@ export const copyEs: Copy = {
     skipWarning:
       "Demasiados saltos. Las respuestas honestas dan retratos más precisos.",
     loading: "Cargando…",
-    questionsCount: "{count} preguntas.",
+    questionsCount: "{short} / {standard} / {deep} preguntas.",
     start: "Empezar",
     chooseMode: "Elige el tamaño",
     modeShort: "Corto — 36 preguntas, ~4 min",

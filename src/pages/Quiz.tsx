@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, HelpCircle } from "lucide-react";
 import { useI18n } from "../i18n";
@@ -25,35 +25,39 @@ export function Quiz() {
 
   const [mode, setMode] = useState<"choose" | "running">("choose");
   const [skipWarned, setSkipWarned] = useState(false);
+  const initialized = useRef(false);
 
   const draft = store.draft;
 
-  // Si la URL trae ?modo=short|standard|deep, startQuiz inmediato.
+  // Inicialización: maneja duelo, modo y borrador.
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
     const m = searchParams.get("modo");
-    if (m === "short" || m === "standard" || m === "deep") {
-      // Verificar duelo.
-      const duelo = searchParams.get("duelo");
-      let dueloPayload: string | null = null;
-      if (duelo) {
-        const decoded = decodeScores(duelo);
-        if (decoded) {
-          dueloPayload = duelo;
-          setDueloPayload(duelo);
-        }
+    const duelo = searchParams.get("duelo");
+
+    // Caso 1: Hay duelo válido → empezar SIEMPRE un short nuevo.
+    if (duelo) {
+      const decoded = decodeScores(duelo);
+      if (decoded) {
+        store.startQuiz("short", duelo);
+        setMode("running");
+        return;
       }
-      store.startQuiz(m, dueloPayload);
+    }
+
+    // Caso 2: Hay modo y no hay duelo.
+    if (m === "short" || m === "standard" || m === "deep") {
+      const existing = store.draft;
+      if (!existing || existing.mode !== m) {
+        store.startQuiz(m);
+      }
       setMode("running");
     }
+    // Caso 3: No hay modo → mostrar pantalla de elección (con borrador si existe).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Si ya hay borrador, ir directo a running.
-  useEffect(() => {
-    if (draft && mode === "choose") {
-      setMode("running");
-    }
-  }, [draft, mode]);
 
   const questions = useMemo(() => {
     if (!draft) return [];
@@ -98,16 +102,23 @@ export function Quiz() {
   function finishQuiz() {
     if (!draft) return;
     const scores = computeScores(questions, draft.answers);
-    const url = buildResultUrl(scores, lang);
+
+    // Limpiar el draft antes de navegar.
+    store.clearDraft();
 
     // Si hay duelo, navegar a comparar.
     if (draft.dueloPayload) {
       const duelo = draft.dueloPayload;
       setDueloPayload(null);
-      navigate(`/comparar?a=${duelo}&b=${encodeScoresSafe(scores, lang)}`, { replace: true });
+      const newPayload = encodeScoresSafe(scores, lang);
+      navigate(
+        `/comparar?a=${encodeURIComponent(duelo)}&b=${encodeURIComponent(newPayload)}`,
+        { replace: true },
+      );
       return;
     }
 
+    const url = buildResultUrl(scores, lang);
     navigate(url, { replace: true });
   }
 
@@ -155,7 +166,10 @@ export function Quiz() {
         <header className="mb-10 text-center">
           <h1 className="font-serif text-3xl font-black md:text-4xl">{copy.quiz.chooseMode}</h1>
           <p className="mt-3 text-ink/60 dark:text-ink-dark/60">
-            {copy.quiz.questionsCount.replace("{count}", String(MODE_QUESTIONS.short))}
+            {copy.quiz.questionsCount
+              .replace("{short}", String(MODE_QUESTIONS.short))
+              .replace("{standard}", String(MODE_QUESTIONS.standard))
+              .replace("{deep}", String(MODE_QUESTIONS.deep))}
           </p>
         </header>
 

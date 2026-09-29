@@ -98,7 +98,7 @@ export function Results({ embed = false }: { embed?: boolean }) {
 
   const handleRetar = useCallback(async () => {
     if (!payload) return;
-    const dueloUrl = `${window.location.origin}/quiz?duelo=${payload}`;
+    const dueloUrl = `${window.location.origin}/quiz?modo=short&duelo=${encodeURIComponent(payload)}`;
     const text = copy.results.shareText.replace(
       "{ideologia}",
       matches?.topIdeology.item.name[lang] ?? "",
@@ -324,7 +324,7 @@ export function Results({ embed = false }: { embed?: boolean }) {
               {copy.results.retar}
             </button>
             <Link
-              to="/quiz"
+              to="/quiz?modo=short"
               className="inline-flex items-center gap-2 rounded-full border-2 border-ink/20 px-5 py-2.5 text-sm font-bold transition-colors hover:border-ink/40 dark:border-ink-dark/20 dark:hover:border-ink-dark/40"
             >
               <RotateCcw size={16} />
